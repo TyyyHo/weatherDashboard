@@ -15,38 +15,24 @@ function App() {
       .padStart(2, "0");
     let minute = d.getMinutes().toString().padStart(2, "0");
 
-    const weekendList = [
-      "星期天",
-      "星期一",
-      "星期二",
-      "星期三",
-      "星期四",
-      "星期五",
-      "星期六",
-    ];
-    let weekend = weekendList[d.getDay()];
+    const weekendList = ["天", "一", "二", "三", "四", "五", "六"];
+    let weekend = `星期${weekendList[d.getDay()]}`;
 
     return `${month + 1}/${day} ${weekend} ${hour}:${minute}`;
   };
 
-  // let data = { location: [] };
-  let location;
-  let weatherSituation;
-  let maxTemperature;
-  let minTemperature;
-  let chanceOfRaining;
-
+  let location, weatherSituation, maxTemperature, minTemperature, chanceOfRaining;
   if (data.location[optionIndex] !== undefined) {
-    let seletedLoaction = data.location[optionIndex];
-    weatherSituation =
-      seletedLoaction.weatherElement[0].time[0].parameter.parameterName;
+    // 0:天氣概況; 1:降雨機率; 2:最低溫度; 4:最高溫度;
+    let weatherOption = (params) => {
+      return data.location[optionIndex].weatherElement[params].time[0].parameter
+        .parameterName;
+    };
     location = data.location[optionIndex].locationName;
-    maxTemperature =
-      seletedLoaction.weatherElement[4].time[0].parameter.parameterName;
-    minTemperature =
-      seletedLoaction.weatherElement[2].time[0].parameter.parameterName;
-    chanceOfRaining =
-      seletedLoaction.weatherElement[1].time[0].parameter.parameterName;
+    weatherSituation = weatherOption(0);
+    maxTemperature = weatherOption(4);
+    minTemperature = weatherOption(2);
+    chanceOfRaining = weatherOption(1);
   }
 
   useEffect(() => {
@@ -60,11 +46,7 @@ function App() {
 
   return (
     <div className="App">
-      <select
-        name=""
-        id="selectList"
-        onChange={(e) => setIndex(e.target.value)}
-      >
+      <select id="selectList" onChange={(e) => setIndex(e.target.value)}>
         {data.location.map((item, index) => {
           return (
             <option key={index} value={index}>
