@@ -5,6 +5,7 @@ import "./App.css";
 function App() {
   const [data, setData] = useState({ location: [] });
   const [optionIndex, setIndex] = useState(0);
+  const [time, setTime] = useState();
 
   const date = () => {
     let d = new Date();
@@ -21,7 +22,11 @@ function App() {
     return `${month + 1}/${day} ${weekend} ${hour}:${minute}`;
   };
 
-  let location, weatherSituation, maxTemperature, minTemperature, chanceOfRaining;
+  let location,
+    weatherSituation,
+    maxTemperature,
+    minTemperature,
+    chanceOfRaining;
   if (data.location[optionIndex] !== undefined) {
     // 0:天氣概況; 1:降雨機率; 2:最低溫度; 4:最高溫度;
     let weatherOption = (params) => {
@@ -36,6 +41,7 @@ function App() {
   }
 
   useEffect(() => {
+    setTime(date());
     const url =
       "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-BC636609-BA31-4490-908B-FF44F4110E3A&format=JSON";
     axios
@@ -46,7 +52,13 @@ function App() {
 
   return (
     <div className="App">
-      <select id="selectList" onChange={(e) => setIndex(e.target.value)}>
+      <select
+        id="selectList"
+        onChange={(e) => {
+          setIndex(e.target.value);
+          setTime(date());
+        }}
+      >
         {data.location.map((item, index) => {
           return (
             <option key={index} value={index}>
@@ -56,7 +68,8 @@ function App() {
         })}
       </select>
       <h1 id="location">{location}</h1>
-      <h4>{date()}</h4>
+      <h4>{time}</h4>
+      <p className="refresh" onClick={()=>setTime(date())}>刷新時間</p>
       <h4 className="text">現在天氣</h4>
       <div className="text">{`天氣概況: ${weatherSituation}`}</div>
       <div className="text">{`降雨機率: ${chanceOfRaining}%`}</div>
